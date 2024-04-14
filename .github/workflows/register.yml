@@ -1,0 +1,59 @@
+name: register
+
+on:
+  workflow_dispatch:
+    inputs:
+      package_name:
+        description: 'Package name'
+        required: true
+        type: string
+      version:
+        description: 'Version of the package (tag name)'
+        required: true
+        type: string
+      author:
+        description: 'Author(s) of the package'
+        required: true
+        type: string
+      short_desc:
+        description: 'A short description of the package to show on the index'
+        required: true
+        type: string
+      homepage:
+        description: 'Homepage of the package (link to the github repository)'
+        required: true
+        type: string
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Run Action
+      env:
+        PKG_ACTION: REGISTER
+        PKG_NAME: ${{ inputs.package_name }}
+        PKG_VERSION: ${{ inputs.version }}
+        PKG_AUTHOR: ${{ inputs.author }}
+        PKG_SHORT_DESC: ${{ inputs.short_desc }}
+        PKG_HOMEPAGE: ${{ inputs.homepage }}
+      run: |
+        pip install beautifulsoup4
+        python .github/actions.py 
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v3
+      with:
+        commit-message: ':package: [:robot:] Register package in PyPi index'
+        title: '[🤖] Register `${{ inputs.package_name }}` in PyPi index'
+        body: Automatically generated PR, registering `${{ inputs.package_name }}` in PyPi
+          index.
+        branch-suffix: random
+        delete-branch: true
