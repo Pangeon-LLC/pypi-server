@@ -129,7 +129,11 @@ def update(pkg_name, version):
     # Extract the URL from the onclick attribute
     button = soup.find('button', id='repoHomepage')
     if button:
-        link = button.get("onclick")[len("location.href='"):-1]
+        onclick = button.get("onclick")
+        if onclick.startswith("location.href="):
+            link = onclick[len("location.href='"):-1]
+        elif onclick.startswith("location.href="):
+            link = onclick[len('location.href="'):-1]
     else:
         raise Exception("Homepage URL not found")
 
