@@ -131,7 +131,10 @@ def update(pkg_name, version):
     if button:
         onclick_value = button.get("onclick")
         if onclick_value:
-            link = onclick_value.decode("utf-8")[len("location.href='"):-2]
+            link = re.findall(r"location\.href='(.*?)'", onclick_value)
+            if link:
+                url = link[0]
+                print(url)
 
     else:
         raise Exception("Homepage URL not found")
