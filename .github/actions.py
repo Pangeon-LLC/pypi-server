@@ -147,7 +147,7 @@ def update(pkg_name, version):
         main_version_span = soup.find('span', id='latest-main-version')
         main_version_span.string = version
     anchor.string = norm_version
-    anchor['href'] = f"git+{link}@{version}#egg={norm_pkg_name}-{norm_version}"
+    anchor['href'] = f"git+https://github.com/Pangeon-LLC/{pkg_name}@{version}#egg={norm_pkg_name}-{norm_version}"
 
     # Add it to our index
     original_div.insert_after(new_div)
